@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="content py-4">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-2">
+      <h1 class="fw-bold mb-0">Admin Dashboard</h1>
+    </div>
+    <p class="text-muted mt-2 mb-4">Monitor and manage all case activities</p>
+
+    <!-- Summary Cards -->
+    <div class="row g-4">
+      <!-- Total Complaints -->
+      <div class="col-lg-4 col-md-6">
+        <div class="border rounded-4 p-4 shadow-sm h-100">
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-clipboard-data display-5 text-primary"></i>
+            <div class="ms-3">
+              <p class="mb-0 text-muted">Total Complaints</p>
+              <h3 class="fw-bold" th:text="${totalComplaints}">0</h3>
+            </div>
+          </div>
+          <hr>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success-subtle text-success p-2">+12%</span>
+            <small class="text-muted">Since last week</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Cases -->
+      <div class="col-lg-4 col-md-6">
+        <div class="border rounded-4 p-4 shadow-sm h-100">
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-hourglass-split display-5 text-warning"></i>
+            <div class="ms-3">
+              <p class="mb-0 text-muted">Active Cases</p>
+              <h3 class="fw-bold" th:text="${activeCases}">0</h3>
+            </div>
+          </div>
+          <hr>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-danger-subtle text-danger p-2">-5%</span>
+            <small class="text-muted">Compared to last month</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Solved Cases -->
+      <div class="col-lg-4 col-md-6">
+        <div class="border rounded-4 p-4 shadow-sm h-100">
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-check-circle-fill display-5 text-success"></i>
+            <div class="ms-3">
+              <p class="mb-0 text-muted">Solved Cases</p>
+               <h3 class="fw-bold" th:text="${solvedCases}">0</h3>
+            </div>
+          </div>
+          <hr>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-primary-subtle text-primary p-2">+18%</span>
+            <small class="text-muted">Since last review</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-12 mt-4 mb-4">
+      <div class="border rounded-4 p-4 shadow-sm h-100">
+        <h5 class="d-flex align-items-center gap-2 mb-4">
+          <i class="bi bi-lightning-fill"></i> Quick Actions
+        </h5>
+        <div class="d-flex flex-wrap gap-3">
+          <button class="btn btn-outline-primary d-flex align-items-center gap-2"
+        onclick="window.location.href='/admin/usercomplaints'">
+  <i class="bi bi-eye"></i> View Complaints
+</button>
+
+          
+          <button class="btn btn-outline-info d-flex align-items-center gap-2"
+              onclick="window.location.href='/admin/view-cases'">
+        <i class="bi bi-journal-text"></i> View Cases
+      </button>
+          
+          <form th:action="@{/logout}" method="post" class="d-inline">
+        <button type="submit" class="btn btn-outline-danger d-flex align-items-center gap-2">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case Tracking & Officer List -->
+    <div class="row g-4 d-flex mt-4">
+      <!-- Case Tracking (Chart) -->
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-3">
+              <i class="bi bi-bar-chart-line"></i> Case Tracking
+            </h5>
+            <div class="d-flex justify-content-center">
+              <div style="width: 180px; height: 180px;">
+                <canvas id="caseChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Officer Case List (Styled like To-Do) -->
+      <div class="col-md-6">
+  <div class="card shadow-sm border-0 rounded-4 h-100">
+    <div class="card-body d-flex flex-column">
+      <h2 class="card-title mb-4 fs-6">
+        <i class="bi bi-person-badge"></i> Officers & Case Count
+      </h2>
+
+      <ul class="list-group flex-grow-1">
+        <li class="list-group-item d-flex justify-content-between align-items-center"
+            th:each="entry : ${officerCaseCounts}">
+          <span>
+            <i class="bi bi-person-fill me-2"></i>
+            <span th:text="${entry.key.username}">Officer Name</span>
+          </span>
+          <span class="badge bg-info" th:text="${entry.value + ' Cases'}">0 Cases</span>
+        </li>
+      </ul>
+
+      <div class="d-grid mt-4">
+        <a href="#" class="btn btn-outline-primary">
+          <i class="bi bi-plus-circle"></i> View All Officers
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script>
+const ctx = document.getElementById('caseChart').getContext('2d');
+new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Solved', 'Active', 'Pending'],
+    datasets: [{
+      label: 'Case Tracking',
+      data: [75, 45, 20],
+      backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    cutout: '70%',
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom'
+      }
+    }
+  }
+});
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
